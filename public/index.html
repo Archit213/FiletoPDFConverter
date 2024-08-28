@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File to PDF Converter</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Custom styling for alert box at the top of the page */
+        .alert-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            display: none;
+            max-width: 400px;
+            width: 100%;
+            background-color: #fff;
+            border: 2px solid #3182ce;
+            padding: 20px;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        .alert-box h2 {
+            font-size: 1.5rem;
+            color: #2d3748;
+        }
+        .alert-box button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #3182ce;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .alert-box button:hover {
+            background-color: #2b6cb0;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="bg-white p-8 rounded shadow-md max-w-lg w-full">
+        <h1 class="text-3xl font-bold mb-6 text-gray-800">Convert Choosen File to PDF</h1>
+        <form id="uploadForm" enctype="multipart/form-data" class="space-y-4">
+            <input 
+                type="file" 
+                name="file" 
+                accept=".txt,.docx,.jpg,.png" 
+                required 
+                class="block w-full text-gray-700 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-300 focus:border-blue-500">
+            <div class="flex space-x-4">
+                <button 
+                    type="submit" 
+                    class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    onclick="submitForm(event)">
+                    Convert to PDF
+                </button>
+                <button 
+                    id="downloadButton" 
+                    type="button" 
+                    class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300"
+                    onclick="downloadFile()">
+                    Download File
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Custom Alert Box -->
+    <div id="customAlert" class="alert-box">
+        <h2>File Successfully Converted!</h2>
+        <button onclick="closeAlert()">OK</button>
+    </div>
+
+    <script>
+        let downloadUrl = '';
+
+        async function submitForm(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const formData = new FormData(document.getElementById('uploadForm'));
+
+            try {
+                const response = await fetch('/convert', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.fileUrl) {
+                    downloadUrl = data.fileUrl;
+                    showAlert();
+                } else {
+                    alert('Failed to convert file.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred.');
+            }
+        }
+
+        function showAlert() {
+            document.getElementById('customAlert').style.display = 'block';
+        }
+
+        function closeAlert() {
+            document.getElementById('customAlert').style.display = 'none';
+        }
+
+        function downloadFile() {
+            if (downloadUrl) {
+                window.open(downloadUrl, '_blank');
+            } else {
+                alert('No file available for download.');
+            }
+        }
+    </script>
+</body>
+</html>
