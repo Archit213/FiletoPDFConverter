@@ -18,4 +18,4 @@ cd file-to-pdf-converter
 npm init -y
 npm install express multer pdf-lib
 npm install mammoth
-
+node app.js (use this to run the code)
