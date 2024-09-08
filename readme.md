@@ -19,4 +19,4 @@ npm init -y
 npm install express multer pdf-lib
 npm install mammoth
 node app.js (use this to run the code)
-### 2. Create a folder (uploads)
+Create a folder (uploads)
